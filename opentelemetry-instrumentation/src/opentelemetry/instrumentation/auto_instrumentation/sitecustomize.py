@@ -27,6 +27,10 @@ from opentelemetry.instrumentation.environment_variables import (
 )
 from opentelemetry.instrumentation.utils import _python_path_without_directory
 from opentelemetry.instrumentation.version import __version__
+from opentelemetry.environment_variables import (
+    OTEL_METRICS_EXPORTER,
+    OTEL_TRACES_EXPORTER,
+)
 
 logger = getLogger(__name__)
 
@@ -110,6 +114,10 @@ def _load_configurators():
 
 
 def initialize():
+    print("JEREMYVOSS: sitecustomize")
+    print("JEREMYVOSS: PYTHONPATH: %s" % environ["PYTHONPATH"])
+    print("JEREMYVOSS: OTEL_TRACES_EXPORTER: %s" % environ[OTEL_TRACES_EXPORTER])
+    # print("JEREMYVOSS: OTEL_METRICS_EXPORTER: %s" % environ[OTEL_METRICS_EXPORTER])
     # prevents auto-instrumentation of subprocesses if code execs another python process
     environ["PYTHONPATH"] = _python_path_without_directory(
         environ["PYTHONPATH"], dirname(abspath(__file__)), pathsep
