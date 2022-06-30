@@ -30,6 +30,7 @@ _logger = getLogger(__name__)
 
 def run() -> None:
 
+    print("JEREMYVOSS: auto_instrumentation/__init__/run()")
     parser = ArgumentParser(
         description="""
         opentelemetry-instrument automatically instruments a Python
