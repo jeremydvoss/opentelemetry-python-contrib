@@ -36,7 +36,9 @@ logger = getLogger(__name__)
 
 
 def _load_distros() -> BaseDistro:
+    print("JEREMYVOSS: _load_distros")
     for entry_point in iter_entry_points("opentelemetry_distro"):
+        print("JEREMYVOSS: _load_distros: entry_point: %s" % entry_point)
         try:
             distro = entry_point.load()()
             if not isinstance(distro, BaseDistro):
@@ -58,6 +60,7 @@ def _load_distros() -> BaseDistro:
 
 
 def _load_instrumentors(distro):
+    print("JEREMYVOSS: _load_instrumentors")  
     package_to_exclude = environ.get(OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, [])
     if isinstance(package_to_exclude, str):
         package_to_exclude = package_to_exclude.split(",")
@@ -65,6 +68,7 @@ def _load_instrumentors(distro):
         package_to_exclude = [x.strip() for x in package_to_exclude]
 
     for entry_point in iter_entry_points("opentelemetry_pre_instrument"):
+        print("JEREMYVOSS: _load_instrumentors: entry_point: %s" % entry_point)
         entry_point.load()()
 
     for entry_point in iter_entry_points("opentelemetry_instrumentor"):
@@ -96,8 +100,10 @@ def _load_instrumentors(distro):
 
 
 def _load_configurators():
+    print("JEREMYVOSS: _load_configurators")
     configured = None
     for entry_point in iter_entry_points("opentelemetry_configurator"):
+        print("JEREMYVOSS: _load_configurators: entry_point: %s" % entry_point)
         if configured is not None:
             logger.warning(
                 "Configuration of %s not loaded, %s already loaded",

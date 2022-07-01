@@ -51,13 +51,18 @@ def run() -> None:
     )
 
     argument_otel_environment_variable = {}
-
+    print("JEREMYVOSS: len(iter_entry_points): %s" % sum(1 for _ in iter_entry_points(
+        "opentelemetry_environment_variables"
+    )))     
     for entry_point in iter_entry_points(
         "opentelemetry_environment_variables"
     ):
+        print("\tJEREMYVOSS: entry_point: %s" % entry_point)
         environment_variable_module = entry_point.load()
+        print("\tJEREMYVOSS: environment_variable_module: %s" % environment_variable_module)
 
         for attribute in dir(environment_variable_module):
+            print("\t\tJEREMYVOSS: attribute: %s" % attribute)
 
             if attribute.startswith("OTEL_"):
 
@@ -87,12 +92,15 @@ def run() -> None:
     for argument, otel_environment_variable in (
         argument_otel_environment_variable
     ).items():
+        print("JEREMYVOSS: argument: %s" % argument)
+        print("JEREMYVOSS: otel_environment_variable: %s" % otel_environment_variable)
         value = getattr(args, argument)
         if value is not None:
 
             environ[otel_environment_variable] = value
 
     python_path = environ.get("PYTHONPATH")
+    print("JEREMYVOSS: init PYTHONPATH: %s" % python_path)
 
     if not python_path:
         python_path = []
@@ -101,6 +109,8 @@ def run() -> None:
         python_path = python_path.split(pathsep)
 
     cwd_path = getcwd()
+    print("JEREMYVOSS: cwd_path: %s" % cwd_path)
+
 
     # This is being added to support applications that are being run from their
     # own executable, like Django.
@@ -109,6 +119,7 @@ def run() -> None:
         python_path.insert(0, cwd_path)
 
     filedir_path = dirname(abspath(__file__))
+    print("JEREMYVOSS: filedir_path: %s" % filedir_path)
 
     python_path = [path for path in python_path if path != filedir_path]
 
