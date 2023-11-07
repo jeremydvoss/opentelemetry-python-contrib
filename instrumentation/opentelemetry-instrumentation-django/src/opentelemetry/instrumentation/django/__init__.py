@@ -361,6 +361,7 @@ class DjangoInstrumentor(BaseInstrumentor):
         settings_middleware.insert(0, self._opentelemetry_middleware)
 
         setattr(settings, _middleware_setting, settings_middleware)
+        print("JEREVOSS: middleware settings: %s" % getattr(settings, _middleware_setting))
 
     def _uninstrument(self, **kwargs):
         _middleware_setting = _get_django_middleware_setting()
