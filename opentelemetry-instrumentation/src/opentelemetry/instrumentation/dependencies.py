@@ -47,13 +47,19 @@ def get_dist_dependency_conflicts(
     extra = "extra"
     instruments = "instruments"
     instruments_marker = {extra: instruments}
+    print(f"dist: {dist}")
+    print(f"dist.requires: {dist.requires}")
     if dist.requires:
         for dep in dist.requires:
+            print(f"dep: {dep}")
             if extra not in dep or instruments not in dep:
+                print(f"Skipping dep: {dep}")
                 continue
 
             req = Requirement(dep)
+            print(f"req: {req}")
             if req.marker.evaluate(instruments_marker):
+                print("Evaluated. Append")
                 instrumentation_deps.append(req)
 
     return get_dependency_conflicts(instrumentation_deps)
