@@ -59,6 +59,7 @@ def main(base_instrumentation_path):
             exec(fh.read(), pkg_info)
 
         instruments_and = pkg_info.get("_instruments", ())
+        # _instruments_either is an optional field that can be used instead of or in addition to _instruments. While _instruments is a list of dependencies, all of which are expected by the instrumentation, _instruments_either is a list any of which but not all are expected.
         instruments_either = pkg_info.get("_instruments_either", ())
         supports_metrics = pkg_info.get("_supports_metrics")
         semconv_status = pkg_info.get("_semconv_status")

@@ -93,6 +93,7 @@ def main():
                     values=[ast.Str(target_pkg), ast.Str(pkg["requirement"])],
                 )
             )
+        # _instruments_either is an optional field that can be used instead of or in addition to _instruments. While _instruments is a list of dependencies, all of which are expected by the instrumentation, _instruments_either is a list any of which but not all are expected.
         for target_pkg in pkg["instruments_either"]:
             libraries.elts.append(
                 ast.Dict(
