@@ -326,7 +326,7 @@ Below is a checklist of things to be mindful of when implementing a new instrume
 
 - Navigate to the **instrumentation package directory:**
   - Update **`pyproject.toml`** file by modifying _instruments_ or _instruments-any_ entry in the `[project.optional-dependencies]` section with the new version constraint
-  - Update `_instruments` or `_instruments-any` variable in instrumentation **`package.py`** file with the new version constraint
+  - Update `_instruments` or `_instruments_any` variable in instrumentation **`package.py`** file with the new version constraint
 - At the **root of the project directory**, run `tox -e generate` to regenerate necessary files
 
 Please note that _instruments-any_ is an optional field that can be used instead of or in addition to _instruments_. While _instruments_ is a list of dependencies, _all_ of which are expected by the instrumentation, _instruments-any_ is a list _any_ of which but not all are expected.

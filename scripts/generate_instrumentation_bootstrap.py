@@ -93,7 +93,7 @@ def main():
                     values=[ast.Str(target_pkg), ast.Str(pkg["requirement"])],
                 )
             )
-        # _instruments-any is an optional field that can be used instead of or in addition to _instruments. While _instruments is a list of dependencies, all of which are expected by the instrumentation, _instruments-any is a list any of which but not all are expected.
+        # instruments-any is an optional field that can be used instead of or in addition to _instruments. While _instruments is a list of dependencies, all of which are expected by the instrumentation, instruments-any is a list any of which but not all are expected.
         for target_pkg in pkg["instruments-any"]:
             libraries.elts.append(
                 ast.Dict(
