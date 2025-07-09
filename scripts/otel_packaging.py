@@ -64,15 +64,13 @@ def get_instrumentation_packages(
             "optional-dependencies"
         ]
         instruments = optional_dependencies.get("instruments", [])
-        # _instruments_either is an optional field that can be used instead of or in addition to _instruments. While _instruments is a list of dependencies, all of which are expected by the instrumentation, _instruments_either is a list any of which but not all are expected.
-        instruments_either = optional_dependencies.get(
-            "instruments_either", []
-        )
+        # _instruments-any is an optional field that can be used instead of or in addition to _instruments. While _instruments is a list of dependencies, all of which are expected by the instrumentation, _instruments-any is a list any of which but not all are expected.
+        instruments_any = optional_dependencies.get("instruments-any", [])
         instrumentation = {
             "name": pyproject_toml["project"]["name"],
             "version": version.strip(),
             "instruments": instruments,
-            "instruments_either": instruments_either,
+            "instruments-any": instruments_any,
         }
         if instrumentation["name"] in independent_packages:
             specifier = independent_packages[instrumentation["name"]]

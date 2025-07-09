@@ -40,33 +40,33 @@ class DependencyConflict:
     Attributes:
         required: The required dependency specification that conflicts with what's installed.
         found: The actual dependency that was found installed (if any).
-        required_either: Collection of dependency specifications where any one would satisfy
+        required_any: Collection of dependency specifications where any one would satisfy
             the requirement (for either/or scenarios).
-        found_either: Collection of actual dependencies found for either/or scenarios.
+        found_any: Collection of actual dependencies found for either/or scenarios.
     """
 
     required: str | None = None
     found: str | None = None
     # The following fields are used when an instrumentation requires any of a set of dependencies rather than all.
-    required_either: Collection[str] = None
-    found_either: Collection[str] = None
+    required_any: Collection[str] = None
+    found_any: Collection[str] = None
 
     def __init__(
         self,
         required: str | None = None,
         found: str | None = None,
-        required_either: Collection[str] = None,
-        found_either: Collection[str] = None,
+        required_any: Collection[str] = None,
+        found_any: Collection[str] = None,
     ):
         self.required = required
         self.found = found
         # The following fields are used when an instrumentation requires any of a set of dependencies rather than all.
-        self.required_either = required_either
-        self.found_either = found_either
+        self.required_any = required_any
+        self.found_any = found_any
 
     def __str__(self):
-        if not self.required and (self.required_either or self.found_either):
-            return f'DependencyConflict: requested any of the following: "{self.required_either}" but found: "{self.found_either}"'
+        if not self.required and (self.required_any or self.found_any):
+            return f'DependencyConflict: requested any of the following: "{self.required_any}" but found: "{self.found_any}"'
         return f'DependencyConflict: requested: "{self.required}" but found: "{self.found}"'
 
 
@@ -84,26 +84,26 @@ def get_dist_dependency_conflicts(
     dist: Distribution,
 ) -> DependencyConflict | None:
     instrumentation_deps = []
-    instrumentation_either_deps = []
+    instrumentation_any_deps = []
     extra = "extra"
     instruments = "instruments"
     instruments_marker = {extra: instruments}
-    instruments_either = "instruments_either"
-    instruments_either_marker = {extra: instruments_either}
+    instruments_any = "instruments-any"
+    instruments_any_marker = {extra: instruments_any}
     if dist.requires:
         for dep in dist.requires:
             if extra not in dep:
                 continue
-            if instruments not in dep and instruments_either not in dep:
+            if instruments not in dep and instruments_any not in dep:
                 continue
 
             req = Requirement(dep)
             if req.marker.evaluate(instruments_marker):  # type: ignore
                 instrumentation_deps.append(req)  # type: ignore
-            if req.marker.evaluate(instruments_either_marker):  # type: ignore
-                instrumentation_either_deps.append(req)  # type: ignore
+            if req.marker.evaluate(instruments_any_marker):  # type: ignore
+                instrumentation_any_deps.append(req)  # type: ignore
     return get_dependency_conflicts(
-        instrumentation_deps, instrumentation_either_deps
+        instrumentation_deps, instrumentation_any_deps
     )  # type: ignore
 
 
@@ -111,7 +111,7 @@ def get_dependency_conflicts(
     deps: Collection[
         str | Requirement
     ],  # Dependencies all of which are required
-    deps_either: Collection[
+    deps_any: Collection[
         str | Requirement
     ] = None,  # Dependencies any of which are required
 ) -> DependencyConflict | None:
@@ -137,22 +137,22 @@ def get_dependency_conflicts(
         if not req.specifier.contains(dist_version):
             return DependencyConflict(dep, f"{req.name} {dist_version}")
 
-    # If all the dependencies in "instruments" are present, check "instruments_either" for conflicts.
-    if deps_either:
-        return _get_dependency_conflicts_either(deps_either)
+    # If all the dependencies in "instruments" are present, check "instruments-any" for conflicts.
+    if deps_any:
+        return _get_dependency_conflicts_any(deps_any)
     return None
 
 
 # This is a helper functions designed to ease reading and meet linting requirements.
-def _get_dependency_conflicts_either(
-    deps_either: Collection[str | Requirement],
+def _get_dependency_conflicts_any(
+    deps_any: Collection[str | Requirement],
 ) -> DependencyConflict | None:
-    if not deps_either:
+    if not deps_any:
         return None
     is_dependency_conflict = True
-    required_either: Collection[str] = []
-    found_either: Collection[str] = []
-    for dep in deps_either:
+    required_any: Collection[str] = []
+    found_any: Collection[str] = []
+    for dep in deps_any:
         if isinstance(dep, Requirement):
             req = dep
         else:
@@ -169,20 +169,20 @@ def _get_dependency_conflicts_either(
         try:
             dist_version = version(req.name)
         except PackageNotFoundError:
-            required_either.append(str(dep))
+            required_any.append(str(dep))
             continue
 
         if req.specifier.contains(dist_version):
-            # Since only one of the instrumentation_either dependencies is required, there is no dependency conflict.
+            # Since only one of the instrumentation_any dependencies is required, there is no dependency conflict.
             is_dependency_conflict = False
             break
         # If the version does not match, add it to the list of unfulfilled requirement options.
-        required_either.append(str(dep))
-        found_either.append(f"{req.name} {dist_version}")
+        required_any.append(str(dep))
+        found_any.append(f"{req.name} {dist_version}")
 
     if is_dependency_conflict:
         return DependencyConflict(
-            required_either=required_either,
-            found_either=found_either,
+            required_any=required_any,
+            found_any=found_any,
         )
     return None

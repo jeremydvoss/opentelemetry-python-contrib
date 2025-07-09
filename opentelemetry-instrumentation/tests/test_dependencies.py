@@ -110,7 +110,7 @@ class TestDependencyConflicts(TestBase):
         self.assertTrue(conflict is None)
 
     @patch("opentelemetry.instrumentation.dependencies.version")
-    def test_get_dist_dependency_conflicts_either(self, version_mock):
+    def test_get_dist_dependency_conflicts_any(self, version_mock):
         class MockDistribution(Distribution):
             def locate_file(self, path):
                 pass
@@ -121,8 +121,8 @@ class TestDependencyConflicts(TestBase):
             @property
             def requires(self):
                 return [
-                    'foo ~= 1.0; extra == "instruments_either"',
-                    'bar ~= 1.0; extra == "instruments_either"',
+                    'foo ~= 1.0; extra == "instruments-any"',
+                    'bar ~= 1.0; extra == "instruments-any"',
                 ]
 
         dist = MockDistribution()
@@ -150,8 +150,8 @@ class TestDependencyConflicts(TestBase):
             @property
             def requires(self):
                 return [
-                    'foo ~= 1.0; extra == "instruments_either"',
-                    'bar ~= 1.0; extra == "instruments_either"',
+                    'foo ~= 1.0; extra == "instruments-any"',
+                    'bar ~= 1.0; extra == "instruments-any"',
                 ]
 
         dist = MockDistribution()
@@ -163,12 +163,12 @@ class TestDependencyConflicts(TestBase):
         self.assertTrue(isinstance(conflict, DependencyConflict))
         self.assertEqual(
             str(conflict),
-            '''DependencyConflict: requested any of the following: "['foo~=1.0; extra == "instruments-either"', 'bar~=1.0; extra == "instruments-either"']" but found: "[]"''',
+            '''DependencyConflict: requested any of the following: "['foo~=1.0; extra == "instruments-any"', 'bar~=1.0; extra == "instruments-any"']" but found: "[]"''',
         )
 
     # Tests when both "and" and "either" dependencies are specified and both pass.
     @patch("opentelemetry.instrumentation.dependencies.version")
-    def test_get_dist_dependency_conflicts_either_and(self, version_mock):
+    def test_get_dist_dependency_conflicts_any_and(self, version_mock):
         class MockDistribution(Distribution):
             def locate_file(self, path):
                 pass
@@ -181,8 +181,8 @@ class TestDependencyConflicts(TestBase):
                 # This indicates the instrumentation requires (foo and (bar or baz)))
                 return [
                     'foo ~= 1.0; extra == "instruments"',
-                    'bar ~= 2.0; extra == "instruments_either"',
-                    'baz ~= 3.0; extra == "instruments_either"',
+                    'bar ~= 2.0; extra == "instruments-any"',
+                    'baz ~= 3.0; extra == "instruments-any"',
                 ]
 
         dist = MockDistribution()
@@ -202,9 +202,7 @@ class TestDependencyConflicts(TestBase):
 
     # Tests when both "and" and "either" dependencies are specified but the "and" dependencies fail to resolve.
     @patch("opentelemetry.instrumentation.dependencies.version")
-    def test_get_dist_dependency_conflicts_either_and_failed(
-        self, version_mock
-    ):
+    def test_get_dist_dependency_conflicts_any_and_failed(self, version_mock):
         class MockDistribution(Distribution):
             def locate_file(self, path):
                 pass
@@ -217,8 +215,8 @@ class TestDependencyConflicts(TestBase):
                 # This indicates the instrumentation requires (foo and (bar or baz)))
                 return [
                     'foo ~= 1.0; extra == "instruments"',
-                    'bar ~= 2.0; extra == "instruments_either"',
-                    'baz ~= 3.0; extra == "instruments_either"',
+                    'bar ~= 2.0; extra == "instruments-any"',
+                    'baz ~= 3.0; extra == "instruments-any"',
                 ]
 
         dist = MockDistribution()
@@ -243,9 +241,7 @@ class TestDependencyConflicts(TestBase):
 
     # Tests when both "and" and "either" dependencies are specified but the "either" dependencies fail to resolve.
     @patch("opentelemetry.instrumentation.dependencies.version")
-    def test_get_dist_dependency_conflicts_and_either_failed(
-        self, version_mock
-    ):
+    def test_get_dist_dependency_conflicts_and_any_failed(self, version_mock):
         class MockDistribution(Distribution):
             def locate_file(self, path):
                 pass
@@ -258,8 +254,8 @@ class TestDependencyConflicts(TestBase):
                 # This indicates the instrumentation requires (foo and (bar or baz)))
                 return [
                     'foo ~= 1.0; extra == "instruments"',
-                    'bar ~= 2.0; extra == "instruments_either"',
-                    'baz ~= 3.0; extra == "instruments_either"',
+                    'bar ~= 2.0; extra == "instruments-any"',
+                    'baz ~= 3.0; extra == "instruments-any"',
                 ]
 
         dist = MockDistribution()
@@ -279,5 +275,5 @@ class TestDependencyConflicts(TestBase):
         self.assertTrue(isinstance(conflict, DependencyConflict))
         self.assertEqual(
             str(conflict),
-            '''DependencyConflict: requested any of the following: "['bar~=2.0; extra == "instruments-either"', 'baz~=3.0; extra == "instruments-either"']" but found: "[]"''',
+            '''DependencyConflict: requested any of the following: "['bar~=2.0; extra == "instruments-any"', 'baz~=3.0; extra == "instruments-any"']" but found: "[]"''',
         )

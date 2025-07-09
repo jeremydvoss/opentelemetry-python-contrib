@@ -59,15 +59,15 @@ def main(base_instrumentation_path):
             exec(fh.read(), pkg_info)
 
         instruments_and = pkg_info.get("_instruments", ())
-        # _instruments_either is an optional field that can be used instead of or in addition to _instruments. While _instruments is a list of dependencies, all of which are expected by the instrumentation, _instruments_either is a list any of which but not all are expected.
-        instruments_either = pkg_info.get("_instruments_either", ())
+        # _instruments-any is an optional field that can be used instead of or in addition to _instruments. While _instruments is a list of dependencies, all of which are expected by the instrumentation, _instruments-any is a list any of which but not all are expected.
+        instruments_any = pkg_info.get("_instruments-any", ())
         supports_metrics = pkg_info.get("_supports_metrics")
         semconv_status = pkg_info.get("_semconv_status")
         instruments_all = ()
-        if not instruments_and and not instruments_either:
+        if not instruments_and and not instruments_any:
             instruments_all = (name,)
         else:
-            instruments_all = tuple(instruments_and + instruments_either)
+            instruments_all = tuple(instruments_and + instruments_any)
 
         if not semconv_status:
             semconv_status = "development"
