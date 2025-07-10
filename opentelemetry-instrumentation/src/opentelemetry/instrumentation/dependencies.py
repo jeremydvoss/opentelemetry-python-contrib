@@ -113,7 +113,7 @@ def get_dependency_conflicts(
     ],  # Dependencies all of which are required
     deps_any: Collection[
         str | Requirement
-    ] = None,  # Dependencies any of which are required
+    ] | None = None,  # Dependencies any of which are required
 ) -> DependencyConflict | None:
     for dep in deps:
         if isinstance(dep, Requirement):
